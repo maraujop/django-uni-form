@@ -5,6 +5,7 @@
 """
 from django.core.urlresolvers import reverse, NoReverseMatch
 from django.forms.forms import BoundField
+from django.template import Template, Context
 from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 
@@ -238,6 +239,18 @@ class HTML(object):
     
     def render(self, form):
         return self.html
+
+class HtmlTemplate(object):
+    
+    ''' HTML Template container '''
+    
+    def __init__(self, template):
+        self.template = template
+    
+    def render(self, form):
+	t = Template(self.template)
+	c = Context({'form': form})
+	return t.render(c)
 
 
 class FormHelper(object):
