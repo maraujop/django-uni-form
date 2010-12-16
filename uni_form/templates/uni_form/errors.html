@@ -1,7 +1,8 @@
 {% if form.non_field_errors %}
 <div id="errorMsg">
-      <ul>
+    <h3>Atención</h3>
+    <ol>
         {{ form.non_field_errors|unordered_list }}
-     </ul>
+    </ol>
 </div>
 {% endif %}
