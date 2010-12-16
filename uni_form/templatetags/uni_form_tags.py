@@ -42,6 +42,12 @@ def as_uni_errors(form):
     return template.render(c)
 
 @register.filter
+def as_uni_formset_errors(form):
+    template = get_template('uni_form/errors_formset.html')
+    c = Context({'form':form})
+    return template.render(c)
+
+@register.filter
 def as_uni_field(field):
     template = get_template('uni_form/field.html')
     c = Context({'field':field})
