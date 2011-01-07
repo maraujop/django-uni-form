@@ -74,10 +74,7 @@ class Reset(BaseInput):
 
 def render_field(field, form, template="uni_form/field.html", labelclass=None):
     if not isinstance(field, str):
-        try:
-            return field.render(form)
-        except:
-            raise Exception('field %s is a unicode string instead of an str or does not have a render method' % field)
+        return field.render(form)
 
     try:
         field_instance = form.fields[field]
