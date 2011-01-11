@@ -1,0 +1,9 @@
+# For people using hg-git plugin
+syntax: glob
+*.py[c|o]
+build
+dist
+django_rules.egg-info
+
+eggs/*
+*.egg-info
