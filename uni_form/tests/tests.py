@@ -6,7 +6,16 @@ from django.template.loader import render_to_string
 from django.middleware.csrf import _get_new_csrf_key
 from django.test import TestCase
 
-from uni_form.helpers import FormHelper, Submit, Reset, Hidden, Button
+from uni_form.helpers import FormHelper
+from uni_form.helpers import Submit
+from uni_form.helpers import Reset
+from uni_form.helpers import Hidden
+from uni_form.helpers import Button
+from uni_form.helpers import Layout
+from uni_form.helpers import Fieldset
+from uni_form.helpers import Row
+from uni_form.helpers import HTML
+from uni_form.helpers import HtmlTemplate
 
 class TestForm(forms.Form):
     is_company = forms.CharField(label="company", required=False, widget=forms.CheckboxInput())
@@ -16,6 +25,24 @@ class TestForm(forms.Form):
     first_name = forms.CharField(label="first name", max_length=30, required=True, widget=forms.TextInput())
     last_name = forms.CharField(label="last name", max_length=30, required=True, widget=forms.TextInput())
 
+class TestFormHelper(TestForm):
+    helper = FormHelper()
+    helper.add_layout(Layout(
+            Fieldset(
+                u'Company Data',
+                'is_company',
+            ),
+            Fieldset(
+                u'User Data',
+                'email',
+                Row('password1', 'password2'),
+                HTML('<a href="#" id="testLink">test link</a>'),
+                'first_name',
+                'last_name',
+                HtmlTemplate('{% if not form.errors %}<h2 id="message">Anything could be here</h2>{% endif %}'),
+            )
+        )
+    )
 
 class TestBasicFunctionalityTags(TestCase):
     def setUp(self):
@@ -152,3 +179,32 @@ class TestFormHelpers(TestCase):
         html = template.render(c)
         
         self.assertFalse("<input type='hidden' name='csrfmiddlewaretoken'" in html)                
+
+class TestLayout(TestCase):
+    def test_layout_render(self):
+        template = get_template_from_string(u"""
+            {% load uni_form_tags %}
+            {% uni_form form form_helper.helper %}
+        """)        
+        c = Context({'form': TestForm(), 'form_helper': TestFormHelper()})
+        html = template.render(c)
+
+        self.assertTrue('testLink' in html)
+        self.assertTrue('message' in html)
+
+    def test_change_layout_dynamically(self):
+        template = get_template_from_string(u"""
+            {% load uni_form_tags %}
+            {% uni_form form form_helper.helper %}
+        """)        
+        
+        # Layout needs to be adapted to the form fields
+        form = TestForm()
+        form_helper = TestFormHelper()
+        del form.fields['email']
+        del form_helper.helper.layout.fields[1].fields[0]
+
+        c = Context({'form': form, 'form_helper': form_helper})
+        html = template.render(c)
+        
+        self.assertFalse('email' in html)
