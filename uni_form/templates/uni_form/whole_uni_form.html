@@ -8,7 +8,7 @@
 
     {% if form.non_field_errors %}
         <div id="errorMsg">
-            <h3>{% if error_message_title %}{{ error_message_title }}{% else %}Errors{% endif %}</h3>
+            <h3>{% if error_message_title %}{{ error_message_title }}{% else %} Atención {% endif %}</h3>
             <ol>
                 {{ form.non_field_errors|unordered_list }}
             </ol>
@@ -26,7 +26,7 @@
         <div class="buttonHolder">
             {% for input in inputs %}
                 <input type="{{ input.input_type }}"
-                        name="{{ input.name|slugify }}"
+                        name="{{ input.name }}"
                         value="{{ input.value }}"
                         {% ifnotequal input.input_type "hidden" %}
                             class="{{ input.field_classes }}"
